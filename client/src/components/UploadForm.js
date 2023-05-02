@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
+import "./UploadForm.css";
 
 const UploadForm = () => {
   const [file, setFile] = useState(null);
@@ -32,9 +33,13 @@ const UploadForm = () => {
 
   return (
     <form onSubmit={onSubmit}>
-      <lable htmlFor="image">{fileName}</lable>
-      <input id="image" type="file" onChange={imageSelectHandler} />
-      <button type="submit">제출</button>
+      <div className="file-dropper">
+        {fileName}
+        <input id="image" type="file" onChange={imageSelectHandler} />
+      </div>
+      <button className="submit-button" type="submit">
+        제출
+      </button>
     </form>
   );
 };
