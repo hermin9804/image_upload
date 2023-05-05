@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
-const ImageList = () => {
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("/images")
-      .then((res) => setImages(res.data))
-      .catch((err) => console.error(err));
-  }, []);
-
+const ImageList = ({ images }) => {
   const imgList = images.map((image) => (
     <img
+      key={image.key}
       style={{ width: "100%" }}
       src={`http://localhost:5001/uploads/${image.key}`}
       alt={image.name}

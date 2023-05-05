@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import "./UploadForm.css";
 import ProgressBar from "./ProgressBar";
 
-const UploadForm = () => {
+const UploadForm = ({ images, setImages }) => {
   const defaultFileName = "이미지 파일을 업로드 해주세요.";
   const [file, setFile] = useState(null);
   const [imgSrc, setImgSrc] = useState(null);
@@ -36,6 +36,8 @@ const UploadForm = () => {
           setPercent(Math.round((100 * e.loaded) / e.total));
         },
       });
+      setImages([...images, res.data]);
+
       toast.success("이미지 업로드 성공");
       setTimeout(() => {
         setPercent(0);
