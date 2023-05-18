@@ -5,7 +5,7 @@ const ToolBar = () => {
   return (
     <div>
       <Link to="/">
-        <span>홈</span>
+        <span>사진첩</span>
       </Link>
       <Link to="/auth/login">
         <span style={{ float: "right" }}>로그인</span>
