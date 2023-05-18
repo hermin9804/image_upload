@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Routes, Route } from "react-router-dom";
 
-import UploadForm from "./components/UploadForm";
-import ImageList from "./components/ImageList";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import MainPage from "./pages/MainPage";
 
 const App = () => {
   return (
@@ -14,9 +16,11 @@ const App = () => {
       }}
     >
       <ToastContainer />
-      <h2>사진첩</h2>
-      <UploadForm />
-      <ImageList />
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/auth/register" element={<RegisterPage />} />
+        <Route path="/auth/login" element={<LoginPage />} />
+      </Routes>
     </div>
   );
 };
