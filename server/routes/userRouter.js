@@ -25,6 +25,7 @@ userRouter.post("/register", async (req, res) => {
       name: user.username,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 });
