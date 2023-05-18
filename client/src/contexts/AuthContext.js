@@ -7,8 +7,29 @@ export const AuthProvider = ({ children }) => {
   const [me, setMe] = useState(null);
 
   useEffect(() => {
-    if (me) axios.defaults.headers.common.sessionid = me.sessionId;
-    else delete axios.defaults.headers.common.sessionid;
+    const sessionId = localStorage.getItem("sessionId");
+    if (me) {
+      axios.defaults.headers.common.sessionid = me.sessionId;
+      localStorage.setItem("sessionId", me.sessionId);
+    } else if (sessionId) {
+      axios
+        .get("/users/me", {
+          headers: { sessionid: sessionId },
+        })
+        .then((res) => {
+          setMe({
+            name: res.data.name,
+            sessionId: res.data.sessionId,
+            userId: res.data.userId,
+          });
+        })
+        .catch((err) => {
+          localStorage.removeItem("sessionId");
+          delete axios.defaults.headers.common.sessionid;
+        });
+    } else {
+      delete axios.defaults.headers.common.sessionid;
+    }
   }, [me]);
 
   return (

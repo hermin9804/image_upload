@@ -65,4 +65,20 @@ userRouter.patch("/logout", async (req, res) => {
   }
 });
 
+userRouter.get("/me", (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) throw new Error("invalid sessionid");
+    res.json({
+      message: "success",
+      sessionId: req.headers.sessionid,
+      name: user.name,
+      userId: user._id,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = { userRouter };
