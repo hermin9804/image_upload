@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MainPage from "./pages/MainPage";
+import ToolBar from "./components/ToolBar";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         margin: "auto",
       }}
     >
+      <ToolBar />
       <ToastContainer />
       <Routes>
         <Route path="/" element={<MainPage />} />
