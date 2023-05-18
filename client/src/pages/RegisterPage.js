@@ -1,11 +1,38 @@
 import React, { useState } from "react";
 import CustomInput from "../components/CustomInput";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+
+  const submitHandler = async (e) => {
+    try {
+      e.preventDefault();
+      console.log(name, username, password, passwordCheck);
+      if (username.length < 3)
+        throw new Error("username	은 3글자 이상이어야 합니다.");
+      if (password.length < 6)
+        throw new Error("password	은 6글자 이상이어야 합니다.");
+      if (password !== passwordCheck)
+        throw new Error("비밀번호가 일치하지 않습니다.");
+
+      const res = await axios.post("/users/register", {
+        name,
+        username,
+        password,
+      });
+      console.log(res);
+
+      toast.success("회원가입 성공");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div
@@ -17,7 +44,7 @@ const RegisterPage = () => {
       }}
     >
       <h3> 회권가입</h3>
-      <form>
+      <form onSubmit={submitHandler}>
         <CustomInput label="이름" value={name} setValue={setName} />
         <CustomInput label="username" value={username} setValue={setUsername} />
         <CustomInput
@@ -32,6 +59,7 @@ const RegisterPage = () => {
           setValue={setPasswordCheck}
           type="password"
         />
+        <button type="submit">회원가입</button>
       </form>
     </div>
   );
