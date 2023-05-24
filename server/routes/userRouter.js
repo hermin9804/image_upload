@@ -84,10 +84,12 @@ userRouter.get("/me", (req, res) => {
 });
 
 userRouter.get("/me/images", async (req, res) => {
-  // 본인의 사진들만 리턴(public === false)
   try {
     if (!req.user) throw new Error("권한이없습니다.");
-    const images = await Image.findOne({ "user._id": req.user._id });
+    const images = await Image.find({
+      "user._id": req.user._id,
+      public: false,
+    });
     res.json(images);
   } catch (error) {
     console.log(error);
