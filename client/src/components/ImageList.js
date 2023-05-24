@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { ImageContext } from "../contexts/ImageContext";
 import "./ImageList.css";
@@ -6,12 +7,16 @@ import "./ImageList.css";
 const ImageList = () => {
   const { images, myImages, isPublic, setIsPublic } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const imgList = (isPublic ? images : myImages).map((image) => (
     <img
       key={image.key}
       src={`http://localhost:5001/uploads/${image.key}`}
       alt={image.name}
+      onClick={() => {
+        navigate(`/images/${image._id}`);
+      }}
     />
   ));
 
