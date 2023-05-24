@@ -1,6 +1,7 @@
 const Router = require("express").Router;
 const userRouter = Router();
 const User = require("../models/user");
+const Image = require("../models/image");
 const { hash, compare } = require("bcryptjs");
 const mongoose = require("mongoose");
 
@@ -82,8 +83,16 @@ userRouter.get("/me", (req, res) => {
   }
 });
 
-userRouter.get("/me", (req, res) => {
+userRouter.get("/me/images", async (req, res) => {
   // 본인의 사진들만 리턴(public === false)
+  try {
+    if (!req.user) throw new Error("권한이없습니다.");
+    const images = await Image.findOne({ "user._id": req.user._id });
+    res.json(images);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = { userRouter };

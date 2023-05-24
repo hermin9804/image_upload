@@ -4,7 +4,6 @@ const Image = require("../models/image");
 const { upload } = require("../middleware/imageUpload");
 
 imageRouter.post("/", upload.single("image"), async (req, res) => {
-  // todo : 유저 정보, public 유무 확인
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
     const image = await new Image({
@@ -25,14 +24,15 @@ imageRouter.post("/", upload.single("image"), async (req, res) => {
 });
 
 imageRouter.get("/", async (req, res) => {
-  // public 이미지만 가져오기
-  const images = await Image.find();
+  const images = await Image.find({ public: true });
   res.json(images);
 });
 
 imageRouter.delete("/:imageid", (req, res) => {
   // 유저 권한 확인
   // 사진 삭제
+  // 1. uploads 폴더에서 사진 삭제
+  // 2. DB에서 사진 삭제
 });
 imageRouter.patch("/:imageid/like", (req, res) => {
   // 유저 권한 확인
