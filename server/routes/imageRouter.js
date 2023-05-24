@@ -2,6 +2,11 @@ const { Router } = require("express");
 const imageRouter = Router();
 const Image = require("../models/image");
 const { upload } = require("../middleware/imageUpload");
+const fs = require("fs");
+const { promisify } = require("util");
+const mongoose = require("mongoose");
+
+const fileUnlink = promisify(fs.unlink);
 
 imageRouter.post("/", upload.single("image"), async (req, res) => {
   try {
@@ -28,11 +33,25 @@ imageRouter.get("/", async (req, res) => {
   res.json(images);
 });
 
-imageRouter.delete("/:imageid", (req, res) => {
+imageRouter.delete("/:imageId", async (req, res) => {
   // 유저 권한 확인
   // 사진 삭제
   // 1. uploads 폴더에서 사진 삭제
   // 2. DB에서 사진 삭제
+  try {
+    if (!req.user) throw new Error("권한이 없습니다.");
+    if (!mongoose.isValidObjectId(req.params.imageId))
+      throw new Error("잘못된 이미지 아이디입니다.");
+
+    const image = await Image.findOneAndDelete({ _id: req.params.imageId });
+    if (!image) return res.json({ message: "이미지가 존재하지 않습니다." });
+
+    await fileUnlink(`./uploads/${image.key}`);
+    res.json({ message: "이미지가 삭제되었습니다.", image });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
 });
 imageRouter.patch("/:imageid/like", (req, res) => {
   // 유저 권한 확인
