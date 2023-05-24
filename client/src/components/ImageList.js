@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { ImageContext } from "../contexts/ImageContext";
+import "./ImageList.css";
 
 const ImageList = () => {
   const { images, myImages, isPublic, setIsPublic } = useContext(ImageContext);
@@ -9,7 +10,6 @@ const ImageList = () => {
   const imgList = (isPublic ? images : myImages).map((image) => (
     <img
       key={image.key}
-      style={{ width: "100%" }}
       src={`http://localhost:5001/uploads/${image.key}`}
       alt={image.name}
     />
@@ -34,7 +34,7 @@ const ImageList = () => {
           {(isPublic ? "개인" : "공개") + " 사진 보기"}
         </button>
       )}
-      {imgList}
+      <div className="image-list-container">{imgList}</div>
     </div>
   );
 };
