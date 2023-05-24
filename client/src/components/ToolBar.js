@@ -21,6 +21,7 @@ const ToolBar = () => {
   return (
     <div>
       <span
+        style={{ cursor: "pointer" }}
         onClick={() => {
           navigate("/");
         }}
@@ -28,13 +29,16 @@ const ToolBar = () => {
         사진첩
       </span>
       {me ? (
-        <span onClick={logoutHandler} style={{ float: "right" }}>
+        <span
+          onClick={logoutHandler}
+          style={{ float: "right", cursor: "pointer" }}
+        >
           로그아웃 ({me.name})
         </span>
       ) : (
         <>
           <span
-            style={{ float: "right" }}
+            style={{ float: "right", cursor: "pointer" }}
             onClick={() => {
               navigate("/auth/login");
             }}
@@ -42,7 +46,7 @@ const ToolBar = () => {
             로그인
           </span>
           <span
-            style={{ float: "right", marginRight: 15 }}
+            style={{ float: "right", marginRight: 15, cursor: "pointer" }}
             onClick={() => {
               navigate("/auth/register");
             }}
