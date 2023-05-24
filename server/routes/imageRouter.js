@@ -34,10 +34,6 @@ imageRouter.get("/", async (req, res) => {
 });
 
 imageRouter.delete("/:imageId", async (req, res) => {
-  // 유저 권한 확인
-  // 사진 삭제
-  // 1. uploads 폴더에서 사진 삭제
-  // 2. DB에서 사진 삭제
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
     if (!mongoose.isValidObjectId(req.params.imageId))
@@ -53,14 +49,41 @@ imageRouter.delete("/:imageId", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-imageRouter.patch("/:imageid/like", (req, res) => {
-  // 유저 권한 확인
-  // like 중복 안되도록 확인
+
+imageRouter.patch("/:imageId/like", async (req, res) => {
+  try {
+    if (!req.user) throw new Error("권한이 없습니다.");
+    if (!mongoose.isValidObjectId(req.params.imageId))
+      throw new Error("잘못된 이미지 아이디입니다.");
+    const image = await Image.findOneAndUpdate(
+      { _id: req.params.imageId },
+      { $addToSet: { likes: req.user.id } },
+      { new: true }
+    );
+    if (!image) return res.json({ message: "이미지가 존재하지 않습니다." });
+    res.json({ message: "좋아요가 추가되었습니다.", image });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
 });
 
-imageRouter.patch("/:imageid/unlike", (req, res) => {
-  // 유저 권한 확인
-  // like 중복 취소 안되도록 확인
+imageRouter.patch("/:imageId/unlike", async (req, res) => {
+  try {
+    if (!req.user) throw new Error("권한이 없습니다.");
+    if (!mongoose.isValidObjectId(req.params.imageId))
+      throw new Error("잘못된 이미지 아이디입니다.");
+    const image = await Image.findOneAndUpdate(
+      { _id: req.params.imageId },
+      { $pull: { likes: req.user.id } },
+      { new: true }
+    );
+    if (!image) return res.json({ message: "이미지가 존재하지 않습니다." });
+    res.json({ message: "좋아요가 취소되었습니다.", image });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = { imageRouter };
