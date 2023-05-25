@@ -5,7 +5,8 @@ import { ImageContext } from "../contexts/ImageContext";
 import "./ImageList.css";
 
 const ImageList = () => {
-  const { images, myImages, isPublic, setIsPublic } = useContext(ImageContext);
+  const { images, myImages, isPublic, setIsPublic, loadMoreImages } =
+    useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -40,6 +41,7 @@ const ImageList = () => {
         </button>
       )}
       <div className="image-list-container">{imgList}</div>
+      <button onClick={loadMoreImages}>Load More Images</button>
     </div>
   );
 };
