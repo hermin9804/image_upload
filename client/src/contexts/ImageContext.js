@@ -1,4 +1,10 @@
-import React, { useContext, createContext, useState, useEffect } from "react";
+import React, {
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 
@@ -38,12 +44,12 @@ export const ImageProvider = (prop) => {
     }
   }, [me]);
 
-  const loadMoreImages = () => {
-    if (images.length === 0 || imageLoading) return;
-    setImageLoading(true);
-    const lastImageId = images[images.length - 1]._id;
+  const lastImageId = images.length > 0 ? images[images.length - 1]._id : null;
+
+  const loadMoreImages = useCallback(() => {
+    if (imageLoading || !lastImageId) return;
     setImageUrl(`/images?lastid=${lastImageId}`);
-  };
+  }, [lastImageId, imageLoading]);
 
   return (
     <ImageContext.Provider

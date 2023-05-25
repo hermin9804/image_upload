@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { ImageContext } from "../contexts/ImageContext";
@@ -16,17 +16,43 @@ const ImageList = () => {
   } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const navigate = useNavigate();
+  const elementRef = useRef(null);
 
-  const imgList = (isPublic ? images : myImages).map((image) => (
-    <img
-      key={image.key}
-      src={`http://localhost:5001/uploads/${image.key}`}
-      alt={image.name}
-      onClick={() => {
-        navigate(`/images/${image._id}`);
-      }}
-    />
-  ));
+  useEffect(() => {
+    if (!elementRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      console.log("intersection", entry.isIntersecting);
+      if (entry.isIntersecting) {
+        loadMoreImages();
+      }
+    });
+    observer.observe(elementRef.current);
+    return () => observer.disconnect();
+  }, [loadMoreImages]);
+
+  const imgList = isPublic
+    ? images.map((image, index) => (
+        <img
+          key={image.key}
+          src={`http://localhost:5001/uploads/${image.key}`}
+          alt={image.name}
+          ref={index > images.length - 5 ? elementRef : null}
+          onClick={() => {
+            navigate(`/images/${image._id}`);
+          }}
+        />
+      ))
+    : myImages.map((image, index) => (
+        <img
+          key={image.key}
+          src={`http://localhost:5001/uploads/${image.key}`}
+          alt={image.name}
+          ref={index > myImages.length - 5 ? elementRef : null}
+          onClick={() => {
+            navigate(`/images/${image._id}`);
+          }}
+        />
+      ));
 
   return (
     <div>
@@ -49,11 +75,7 @@ const ImageList = () => {
       )}
       <div className="image-list-container">{imgList}</div>
       {imageError && <div>Error...</div>}
-      {imageLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <button onClick={loadMoreImages}>Load More Images</button>
-      )}
+      {imageLoading && <div>Loading...</div>}
     </div>
   );
 };
