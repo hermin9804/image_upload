@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { ImageContext } from "../contexts/ImageContext";
@@ -7,16 +7,21 @@ import "./ImageList.css";
 const ImageList = () => {
   const {
     images,
-    myImages,
     isPublic,
     setIsPublic,
-    loadMoreImages,
     imageLoading,
     imageError,
+    setImageUrl,
   } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const navigate = useNavigate();
   const elementRef = useRef(null);
+
+  const loadMoreImages = useCallback(() => {
+    if (images.length === 0 || imageLoading) return;
+    const lastImageId = images[images.length - 1]._id;
+    setImageUrl(`${isPublic ? "" : "/users/me"}/images?lastId=${lastImageId}`);
+  }, [images, imageLoading, isPublic, setImageUrl]);
 
   useEffect(() => {
     if (!elementRef.current) return;
@@ -30,29 +35,17 @@ const ImageList = () => {
     return () => observer.disconnect();
   }, [loadMoreImages]);
 
-  const imgList = isPublic
-    ? images.map((image, index) => (
-        <img
-          key={image.key}
-          src={`http://localhost:5001/uploads/${image.key}`}
-          alt={image.name}
-          ref={index > images.length - 5 ? elementRef : null}
-          onClick={() => {
-            navigate(`/images/${image._id}`);
-          }}
-        />
-      ))
-    : myImages.map((image, index) => (
-        <img
-          key={image.key}
-          src={`http://localhost:5001/uploads/${image.key}`}
-          alt={image.name}
-          ref={index > myImages.length - 5 ? elementRef : null}
-          onClick={() => {
-            navigate(`/images/${image._id}`);
-          }}
-        />
-      ));
+  const imgList = images.map((image, index) => (
+    <img
+      key={index}
+      src={`http://localhost:5001/uploads/${image.key}`}
+      alt={image.name}
+      ref={index === images.length - 1 ? elementRef : null}
+      onClick={() => {
+        navigate(`/images/${image._id}`);
+      }}
+    />
+  ));
 
   return (
     <div>
